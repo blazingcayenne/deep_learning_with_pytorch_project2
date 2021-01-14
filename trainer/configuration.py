@@ -18,6 +18,43 @@ class SystemConfig:
     # enable CuDNN benchmark for the sake of performance
     cudnn_benchmark_enabled: bool = False
 
+@dataclass
+class DataAugConfig:
+    # maximum amount to jitter brightness
+    color_brightness: float = 0.25
+
+    # maximum amount to jitter contrast
+    color_contrast: float = 0.25
+
+    # maximum amount to jitter saturation
+    color_saturation: float = 0.25
+
+    # maximum amount to jitter hue
+    color_hue: float = 0.25
+
+    # probability of horizontally flipping
+    horz_flip_prob: float = 0.5
+
+    # probability of vertically flipping
+    vert_flip_prob: float = 0.5
+
+    # maximum amount to rotate in degrees
+    affine_rotation: float = 45
+
+    # maximum amount to horizontally and vertically translate
+    affine_translate: Tuple[float, float] = (0.2, 0.2)
+
+    # scaling range
+    affine_scale: Tuple[float, float] = (0.8, 1.2)
+
+    # probability erasing will be performed
+    erasing_prob: float = 0.5
+
+    # range of proportion of erased area against input image
+    erasing_scale: Tuple[float, float] = (0.02, 0.33)
+
+    # range of aspect ratio of erased area
+    erasing_ratio: Tuple[float, float] = (0.3, 3.3)
 
 @dataclass
 class DatasetConfig:
@@ -32,13 +69,19 @@ class DatasetConfig:
         ToTensor(),
     )
 
-    # data transformations to use during test data preparation
+    # data transformations to use during test or validation data preparation
+    # (also used during pipeline check training)
     test_transforms: Iterable[Callable] = (
         ToTensor(),
     )
 
-    #data transformations to use during data visualization
+    #data transformations to use during visualization
     visual_transforms: Iterable[Callable] = (
+        ToTensor(),
+    )
+
+    #data transformations to use during visualization of augmented data
+    visual_aug_transforms: Iterable[Callable] = (
         ToTensor(),
     )
 

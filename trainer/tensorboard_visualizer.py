@@ -29,7 +29,10 @@ class TensorBoardVisualizer(Visualizer):
 
     def add_graph(self, model, images):
         self._writer.add_graph(model, images)
-    
+
+    def add_figure(self, tag, figure, close=True):
+        self._writer.add_figure(tag, figure, close=close)
+
     def add_pr_curves(self, classes, targets, pred_probs):
         for cls_idx in range(len(classes)):
             binary_target = targets == cls_idx

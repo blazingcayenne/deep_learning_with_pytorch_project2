@@ -17,5 +17,9 @@ class Visualizer(ABC):
         pass
     
     @abstractmethod
+    def add_figure(self, tag, figure, close=True):
+        pass
+    
+    @abstractmethod
     def add_pr_curves(self, classes, targets, pred_probs):
         pass
