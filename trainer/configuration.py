@@ -24,16 +24,16 @@ class DataAugConfig:
     color_enabled: bool = True
 
     # maximum amount to jitter brightness
-    color_brightness: Tuple[float, float] = (0.75, 1.25)
+    color_brightness: Tuple[float, float] = (0.85, 1.15)
 
     # maximum amount to jitter contrast
-    color_contrast: Tuple[float, float] = (0.75, 1.25)
+    color_contrast: Tuple[float, float] = (0.5, 1.5)
 
     # maximum amount to jitter saturation
-    color_saturation: Tuple[float, float] = (0.75, 1.25)
+    color_saturation: Tuple[float, float] = (0.5, 2.0)
 
     # maximum amount to jitter hue
-    color_hue: Tuple[float, float] = (-0.25, 0.25)
+    color_hue: Tuple[float, float] = (-0.03, 0.03)
 
     # probability of horizontally flipping
     horz_flip_prob: float = 0.5
@@ -48,10 +48,10 @@ class DataAugConfig:
     affine_rotation: float = 45
 
     # maximum amount to horizontally and vertically translate
-    affine_translate: Tuple[float, float] = (0.2, 0.2)
+    affine_translate: Tuple[float, float] = (0.1, 0.1)
 
     # scaling range
-    affine_scale: Tuple[float, float] = (0.8, 1.2)
+    affine_scale: Tuple[float, float] = (0.9, 1.1)
 
     # probability erasing will be performed
     erasing_prob: float = 0.5
