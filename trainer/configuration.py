@@ -1,5 +1,5 @@
-from typing import Callable, Iterable, Tuple
 from dataclasses import dataclass
+from typing import Callable, Iterable, Tuple
 
 from torchvision.transforms import ToTensor
 
@@ -20,17 +20,20 @@ class SystemConfig:
 
 @dataclass
 class DataAugConfig:
+    # enabled color augmentation
+    color_enabled: bool = True
+
     # maximum amount to jitter brightness
-    color_brightness: float = 0.25
+    color_brightness: Tuple[float, float] = (0.75, 1.25)
 
     # maximum amount to jitter contrast
-    color_contrast: float = 0.25
+    color_contrast: Tuple[float, float] = (0.75, 1.25)
 
     # maximum amount to jitter saturation
-    color_saturation: float = 0.25
+    color_saturation: Tuple[float, float] = (0.75, 1.25)
 
     # maximum amount to jitter hue
-    color_hue: float = 0.25
+    color_hue: Tuple[float, float] = (-0.25, 0.25)
 
     # probability of horizontally flipping
     horz_flip_prob: float = 0.5
@@ -38,6 +41,9 @@ class DataAugConfig:
     # probability of vertically flipping
     vert_flip_prob: float = 0.5
 
+    # enabled affine augmentation
+    affine_enabled: bool = True
+    
     # maximum amount to rotate in degrees
     affine_rotation: float = 45
 
