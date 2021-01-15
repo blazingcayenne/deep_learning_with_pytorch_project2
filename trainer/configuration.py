@@ -141,13 +141,16 @@ class TrainerConfig:
     # number of training iterations
     training_epochs: int = 50
 
+    # use the weighted cross-entropy loss function
+    weighted_loss_fn: bool = True
+
     # enable progress bar visualization during train process
     progress_bar: bool = True
 
     # directory to save model state(s) relative to project directory
     model_dir: str = "models"
 
-    # model save periodicity (> 0) or save when test loss lowers (<= 0)
+    # model save periodicity (> 0), save when test loss lowers (= 0), disable (< 0)
     model_saving_period: int = 0
 
     # directory in which to save visualizations relative to project directory

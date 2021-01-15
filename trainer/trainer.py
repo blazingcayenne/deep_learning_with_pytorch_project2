@@ -140,8 +140,8 @@ class Trainer:  # pylint: disable=too-many-instance-attributes
                             self.model_name) + str(datetime.datetime.now() + ".pt"
                         )
                     )
-            elif epochs_since_lowest_loss == 0:
-                # when msp <= 0, save the model when the test loss is a new low
+            elif self.model_saving_period == 0 and epochs_since_lowest_loss == 0:
+                # when msp == 0, save the model when the test loss is a new low
                 torch.save(
                     self.model.state_dict(),
                     os.path.join(self.model_save_dir, self.model_name + ".pt")
