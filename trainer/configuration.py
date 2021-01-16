@@ -104,7 +104,7 @@ class DataLoaderConfig:
 @dataclass
 class OptimizerConfig:
     # determines the speed of network's weights update
-    learning_rate: float = 0.001
+    learning_rate: float = 0.0005
 
     # SGD optimizer - adds robustness with local minimas
     momentum: float = 0.9
@@ -118,7 +118,7 @@ class OptimizerConfig:
 @dataclass
 class SchedulerConfig:
     # multiplicative factor of learning rate decay
-    gamma: float = 0.1
+    gamma: float = 0.5
 
     # period of learning rate decay
     step_size: int = 10
