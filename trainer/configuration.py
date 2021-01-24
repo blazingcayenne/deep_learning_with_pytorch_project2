@@ -50,6 +50,9 @@ class DataAugConfig:
     # maximum amount to horizontally and vertically translate
     affine_translate: Tuple[float, float] = (0.1, 0.1)
 
+    # maximum amount of shear to apply
+    affine_shear: Tuple[float, float] = (-0.1, 0.1)
+
     # scaling range
     affine_scale: Tuple[float, float] = (0.9, 1.1)
 
@@ -140,9 +143,6 @@ class TrainerConfig:
 
     # number of training iterations
     training_epochs: int = 50
-
-    # use the weighted cross-entropy loss function
-    weighted_loss_fn: bool = True
 
     # enable progress bar visualization during train process
     progress_bar: bool = True
