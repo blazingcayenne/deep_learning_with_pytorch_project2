@@ -50,11 +50,11 @@ class DataAugConfig:
     # maximum amount to horizontally and vertically translate
     affine_translate: Tuple[float, float] = (0.1, 0.1)
 
-    # maximum amount of shear to apply
-    affine_shear: Tuple[float, float] = (-0.1, 0.1)
-
     # scaling range
     affine_scale: Tuple[float, float] = (0.9, 1.1)
+
+    # shearing range
+    affine_shear: Tuple[float, float] = (0.0, 0.0)
 
     # probability erasing will be performed
     erasing_prob: float = 0.5
@@ -64,6 +64,9 @@ class DataAugConfig:
 
     # range of aspect ratio of erased area
     erasing_ratio: Tuple[float, float] = (0.3, 3.3)
+
+    # specifies whether to erase pixels with random values
+    erasing_random: bool = False
 
 @dataclass
 class DatasetConfig:
