@@ -54,7 +54,7 @@ class DataAugConfig:
     affine_scale: Tuple[float, float] = (0.9, 1.1)
 
     # shearing range
-    affine_shear: Tuple[float, float] = (0.0, 0.0)
+    affine_shear: Tuple[float, float] = (0., 0.)
 
     # probability erasing will be performed
     erasing_prob: float = 0.5
@@ -67,6 +67,15 @@ class DataAugConfig:
 
     # specifies whether to erase pixels with random values
     erasing_random: bool = False
+
+    # probability Gaussian noise will be added
+    noise_prob: float = 0.
+
+    # mean of Gaussian noise
+    noise_mean: float = 0.
+
+    # standard deviation of Gaussian noise
+    noise_std: float = 1.
 
 @dataclass
 class DatasetConfig:
