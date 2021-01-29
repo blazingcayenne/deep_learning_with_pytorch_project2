@@ -92,7 +92,7 @@ I implemented the following groups of experiments.
 
 * Group A to explore the data and verify the training pipeline.
 * Group B to explore the impact of learning rate on training pretrained EfficientNet models.
-* Group C to explore the impact of EfficientNet model complexity on bias and variance.
+* Group C to explore the impact of EfficientNet model size on bias and variance.
 
 ## Experiment Group A: Data Visualization and Training Pipeline Check
 
@@ -116,7 +116,7 @@ To properly set the data augmentation transform parameters, I ran several experi
 
 The training pipeline check experiment performed as expected. The training and test loss decreased and the accuracy increased to approximtely 60%.
 
-The results of the data loader experiments are shown below. For a small number of data loader threads, adding an additional thread significantly increases the data loader's efficiency allow it to keep up with GPU. However, past six or seven threads, the impact is minimal on a small network. Since I am using a workstation with 8 hyper-threaded cores for a total of 16 CPUs and GPU acceleration, I dedicated 8 to 12 worker threads to the data loader. As the model complexity increases, the impact of fewer worker threads lessens because each worker has more time to load and transform images before the GPU requires the next batch.
+The results of the data loader experiments are shown below. For a small number of data loader threads, adding an additional thread significantly increases the data loader's efficiency allow it to keep up with GPU. However, past six or seven threads, the impact is minimal on a small network.
 
 <center>
 
@@ -143,6 +143,12 @@ The results of the data loader experiments are shown below. For a small number o
 </center>
 <br>
 
+### Conclusions
+
+The data augmentation looks reasonable. The training pipeline appears to work as expected. Since I training models on a workstation with 8 hyper-threaded cores for a total of 16 CPUs and GPU acceleration, I dedicated 8 to 12 worker threads to the data loader. As the model complexity increases, the impact of fewer worker threads lessens because each worker has more time to load and transform images before the GPU requires the next batch.
+<br>
+<br>
+
 ## Experiment Group B: Learning Rate
 
 ### Introduction
@@ -153,7 +159,7 @@ The purpose of these experiments is to explore the impact of learning rate on tr
 * EfficientNet-B2 (Set B)
 * EfficientNet-B4 (Set C)
 
-The entire network was trained, i.e., no layers were frozen. Each model was trained for 10 epochs with learning rates that varied between 1.0E-06 and 1.0E-02 with 4 learning rates per decade.
+The entire network was trained, i.e., no layers were frozen. Each model was trained for 10 epochs with learning rates that varied between 1.00e-06 and 1.00e-02 with 4 learning rates per decade.
 
 ### Results
 
@@ -198,5 +204,83 @@ Table B1 enumerates the aforementioned metrics for each set's experiment with th
 </center>
 <br>
 
-## Experiment Group C: Model Complexity
+### Conclusions
 
+The optimal learning rate appears to slightly decrease as the model complexity increases. Hence, a maximum learning rate of 1.00e-04 will be used in future EfficientNet experiments.
+<br>
+<br>
+
+## Experiment Group C: Model Size
+
+### Introduction
+
+The purpose of these experiments is to explore the impact of EfficientNet model size on bias and variance. If the model is too small for the dataset, then the accuracy will suffer (high bias). However, if the model is too large for the dataset, then it overfit the data (high variance). Hence, it is important to select the appropriately sized model for the KenyanFood13 dataset. The following pretrained EfficientNet models will be evaluated.
+
+* EfficientNet-B3 (Set A)
+* EfficientNet-B4 (Set B)
+* EfficientNet-B5 (Set C)
+* EfficientNet-B6 (Set D)
+
+Each of the models under test will be trained using the following approaches to test the strategies given by [Marcelino](https://towardsdatascience.com/transfer-learning-from-pre-trained-models-f2393f124751) and [Gupta](https://www.analyticsvidhya.com/blog/2017/06/transfer-learning-the-art-of-fine-tuning-a-pre-trained-model/).
+
+* Only the classifier is trained (\_PT0).
+* The classifier and ~ 40% of convolutional base is trained (\_PT2).
+* The entire network is trained (\_PT5).
+
+The models were trained for 35 epochs. The learning rate started 1.00E-04 and was multipied by the $\sqrt{0.1}$ every 10 epochs.
+
+### Results
+
+The test accuracy at the epoch where the test loss is lowest is used to compare model bias. An overfitting metric was developed to compare model variance. The overfitting metric is computed as follows.
+
+* The test loss is divided by the training loss at each epoch.
+* The loss ratios are fitted to a line (polynomial of order 1).
+* The overfitting metric is the slope of the best fit line.
+
+The overfitting metric is zero is the test loss decreases at the same rate as the training loss. It increases as the test loss decreases at a slower rate than the training loss.
+
+Tables C1, C2, and C3 enumerate the minimum test loss, test accuracy at the epoch with minimum test less, and overfitting metric for the three aforementioned transfer learning strategies. Figures C1, C2, C3 are loss plots from three sample runs. The first sample does not depict any overfitting. The second and third samples do show some overfitting.
+
+<center>
+
+**Table C1:** Analysis of runs where only the classifier is trained.
+|Experiment|Test Loss|Accuracy|Overfitting Metric|
+|:---|:---:|:---:|:---:|
+|CAA_EfficientNetB3_PT0|1.546|54.96|-0.001|
+|CBA_EfficientNetB4_PT0|1.456|55.43|-0.001|
+|CCA_EfficientNetB5_PT0|1.503|55.12|-0.001|
+|CDA_EfficientNetB6_PT0|1.529|54.13|-0.002|
+<br>
+
+**Table C2:** Analysis of runs where classifier and ~ 40% of convolutional base is trained.
+|Experiment|Test Loss|Accuracy|Overfitting Metric|
+|:---|:---:|:---:|:---:|
+|CAB_EfficientNetB3_PT2|0.673|78.11|0.075|
+|CBB_EfficientNetB4_PT2|0.619|80.89|0.118|
+|CCB_EfficientNetB5_PT2|0.640|80.05|0.130|
+|CDB_EfficientNetB6_PT2|0.744|79.51|0.142|
+<br>
+
+**Table C3:** Analysis of runs where the entire network is trained.
+|Experiment|Test Loss|Accuracy|Overfitting Metric|
+|:---|:---:|:---:|:---:|
+|CAC_EfficientNetB3_PT5|0.615|81.26|0.125|
+|CBC_EfficientNetB4_PT5|0.601|82.03|0.195|
+|CCC_EfficientNetB5_PT5|0.576|82.11|0.208|
+|CDC_EfficientNetB6_PT5|0.605|81.88|0.203|
+<br>
+
+![EfficientNet-B4 classifier only training loss plots](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/CBA_EfficientNetB4_PT0.png)<br>
+**Figure C1:** The loss plots of training only the classifier of a pretrained EfficientNet-B4 model.<br>
+
+![EfficientNet-B4 entire network training loss plots](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/CBC_EfficientNetB4_PT5.png)<br>
+**Figure C2:** The loss plots of training the entire network of a pretrained EfficientNet-B4 model.<br>
+
+![EfficientNet-B6 entire network training loss plots](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/CDC_EfficientNetB6_PT5.png)<br>
+**Figure C3:** The loss plots of training the entire network of a pretrained EfficientNet-B6 model.<br>
+
+</center>
+
+### Conclusions
+
+Training only the classifier of the EfficientNet models has a higher bias (lower accuracy) than training part of all of the convolutional base. Surprisingly, training the entire convolutional base yields slightly better accuracy than training the last 40% of the convolutional base. Perhaps this is due to data augmentation. Regarding model complexity, the EfficientNet-B4 model seems appropriately sized. Perhaps with additional data augmentation, the EfficientNet-B5 model may yield slightly higher accuracy.
