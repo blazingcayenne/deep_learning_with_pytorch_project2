@@ -87,6 +87,9 @@ I implemented the following groups of experiments.
 * Group C to explore the impact of EfficientNet model size and transfer learning approach on bias and variance.
 * Group D to explore the impact of additional regularization and dataset imbalance approaches.
 * Group E to explore the impact of a two-stage classifier.
+* Group F to explore training the Project 1 model from scratch.
+* Group G to explore and compare ResNet, ResNeXt, WideResnet, VGG, DenseNet, and EfficientNet models.
+* Group H to explore model ensembles.
 
 ## Experiment Group A: Data Visualization and Training Pipeline Check
 
@@ -417,18 +420,207 @@ stage_results[3]
 
 The two-stage model's accuracy was slightly lower than the best single stage model's accuracy.
 
+## Experiment Group F: Project 1 Comparison
+
+### Introduction
+
+This group of experiments trains Project 1's model from scratch in order to compare its performance versus models developed by researchers who know a lot more than me.
+
+### Results
+
+After 160 epochs, the model achieved an accuracy of approximately 35%. When the experiment was terminated by Google Colabs, the test loss was still decreasing and the accuracy was increasing. It would be an interesting experiment to explore whether [Cyclical Learning Rates for Training Neural Networks](https://www.arxiv-vanity.com/papers/1506.01186/) significantly decreases training time.
+
+### Conclusions
+
+Transfer learning significantly decreases training time.
+
+## Experiment Group G: Model Comparisons
+
+### Introduction
+
+This group of experiments 1) trains the convolutional base and classifier of the following pretrained models and 2) compares their accuracies against the validation data.
+
+* Set A
+  * ResNet-18 
+  * ResNet-34
+  * ResNet-50
+  * ResNet-101
+  * ResNet-152
+* Set B
+  * ResNeXt-50
+  * ResNeXt-101
+* Set C
+  * WideResNet-50
+  * WideResNet-101
+* Set D
+  * VGG11 w/ Batch Normalization
+  * VGG13 w/ Batch Normalization
+  * VGG16 w/ Batch Normalization
+  * VGG19 w/ Batch Normalization
+* Set E
+  * DenseNet-121
+  * DenseNet-169
+  * DenseNet-201
+  * DenseNet-161
+* Set F
+  * EfficientNet-B0
+  * EfficientNet-B1
+  * EfficientNet-B2
+  * EfficientNet-B3
+  * EfficientNet-B4
+  * EfficientNet-B5
+  * EfficientNet-B6
+  * EfficientNet-B7
+
+### Results
+
+The experiments were analyzed. Table G1 enumerates their results in descending order.
+
+**Table G1:** Experiment results sorted by accuracy in descending order.
+
+|Experiment|Test Loss|Accuracy|Overfitting Metric|
+|---|---|---|---|
+|GFF_EfficientNetB5_PT5|0.543|83.18|0.044|
+|GFE_EfficientNetB4_PT5|0.553|82.34|0.037|
+|GFG_EfficientNetB6_PT5|0.644|81.5|0.059|
+|GFH_EfficientNetB7_PT5|0.746|79.59|0.108|
+|GFD_EfficientNetB3_PT5|0.628|79.52|0.023|
+|GBA_ResNeXt50_PT5|0.691|78.74|0.102|
+|GED_DenseNet161_PT5|0.665|78.71|0.078|
+|GCA_WideResNet50_PT5|0.686|78.4|0.122|
+|GEC_DenseNet201_PT5|0.672|78.23|0.067|
+|GBB_ResNeXt101_PT5|0.731|77.51|0.475|
+|GAD_ResNet101_PT5|0.729|77.42|0.101|
+|GFC_EfficientNetB2_PT5|0.703|77.41|0.01|
+|GAC_ResNet50_PT5|0.728|77.02|0.053|
+|GEA_DenseNet121_PT5|0.717|76.88|0.019|
+|GCB_WideResNet101_PT5|0.744|76.56|0.196|
+|GDC_VGG16BN_PT5|0.787|76.53|0.048|
+|GAE_ResNet152_PT5|0.736|76.04|0.129|
+|GDD_VGG19BN_PT5|0.769|75.74|0.062|
+|GEB_DenseNet169_PT5|0.72|75.63|0.047|
+|GDB_VGG13BN_PT5|0.794|74.8|0.028|
+|GFB_EfficientNetB1_PT5|0.799|73.77|0.009|
+|GAB_ResNet34_PT5|0.784|73.57|0.033|
+|GDA_VGG11BN_PT5|0.814|73.15|0.023|
+|GAA_ResNet18_PT5|0.842|71.65|0.013|
+|GFA_EfficientNetB0_PT5|0.961|69.66|0.004|
+
+### Conclusions
+
+The EfficientNet-B5 model most accurately classified the KenyanFood13 validation data.
+
+## Experiment Group H: Ensembles
+
+### Introduction
+
+This set of experiment explores ensembles. As a prelimary test, all models resulting from the Group G experiments who accuracy was greater than or equal to 77% were assembled into an ensemble. The ensemble used three classification approaches.
+
+1. Combine model probabilities and use highest probability as prediction (AP).
+2. Select highest probablity as prediction (MP).
+3. Majority vote wins - ties broken by model with highest accuracy (V1).
+4. Majority vote wins - ties broken by model with highest probability (V2).
+
+Next, the most accurate model, EfficientNet-B5, was trained on 15 different splits of the public data into training and validation data. Given these models have no common validation data, the models are passed to ensemble classifer without regard to their accuracy thereby rendering classification approach V1 meaningless. The test data will be classified by this ensemble using approaches AP, MP, and V2.
+
+### Results
+
+#### Preliminary Test
+
+Predictions for the validation dataset were computed on ensembles comprised of two to 12 of the most accurate models of Group G via the three classification approaches. The accuracies of these predications are summarized in Table H1. The highest accuracy was 85.40%, which is 2.22% higher than the most accurate model. Unfortunately, the most accurate ensemble only achieved an accuracy on the test set of 82.746%, which is only 0.00729% higher than the most accurate model.
+
+**Table H1:** The accuracy of the preliminary ensembles.
+
+|Models|Pred_AP|Pred_MP|Pred_V1|Pred_V2|
+|:---:|:---:|:---:|:---:|:---:|
+|02|83.56|84.02|83.18|84.02|
+|03|83.87|83.87|83.64|84.02|
+|04|84.17|83.87|84.48|84.17|
+|05|84.94|84.10|85.09|85.02|
+|06|84.56|84.02|85.17|85.17|
+|07|84.79|84.02|85.40|85.09|
+|08|84.86|83.94|84.79|84.56|
+|09|84.94|84.40|84.48|84.71|
+|10|84.63|84.40|84.33|83.94|
+|11|84.48|84.40|84.33|84.40|
+|12|83.94|84.17|83.79|83.64|
+
+#### Proper Test
+
+My earlier testing determined the data loader's WeightedRandomSampler equally represented the KenyanFood13 dataset's classes during training. I decided to write test code to determine whether the images it selected were equally represented. Somewhat surprisingly, they were not. Hence, I wrote my own sampler that not only provided equal class representation, but also equal image representation during training. I used this sampler in the Group H, Set A experiments to train EfficientNet-B5 models. In addition, each of these experiments used a different random seed value. Hence, they each partitioned the public data into different training and validation sets. These training set were analyzed by counting how many experiments used eah image in the public dataset. Table H2 enumerates count statistics while Figure H1 depicts of count histogram. In hindsight, I should have manually partitioned the public data into training and validation sets to achieve more equal training exposure of the public images.
+
+**Table H2:** The count statistics. On average each image in the public dataset is used by 11.998 experiments to train its model with a standard deviation of 1.584.
+
+|Statistic|Value|
+|:---|:---:|
+|minimum|5|
+|maximum|15|
+|median|12|
+|mean|11.998|
+|st dev|1.584|
+
+![Count Histogram](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/SetHATrainingDataHistogram.png?raw=true)<br>
+**Figure H1:** The number of public images used by N experiments during training.
+
+Each experiment was analyzed and the results are enumerated in Table H3. The minimum, maximum, and average accuracies are 81.80%, 84.02%, and 82.84% respectively. Figure H2, H3, and H4 are the confusion matrices on the least accurate prediction, most accurate prediction, and an average prediction respectively. Note: Predictions were made of different validation datasets.
+
+**Table H3:** The results of Group H, Set A experiments.
+
+|Experiment|Test Loss|Accuracy|Overfitting Metric|
+|:---|:---:|:---:|:---:|
+|HAA_EfficientNetB5_0042|0.584|82.80|0.089|
+|HAB_EfficientNetB5_5174|0.563|83.49|0.081|
+|HAC_EfficientNetB5_2123|0.621|82.57|0.093|
+|HAD_EfficientNetB5_6993|0.548|83.94|0.086|
+|HAE_EfficientNetB5_8133|0.579|82.65|0.104|
+|HAF_EfficientNetB5_0438|0.587|81.80|0.101|
+|HAG_EfficientNetB5_3708|0.571|83.41|0.096|
+|HAH_EfficientNetB5_0888|0.597|82.57|0.104|
+|HAI_EfficientNetB5_2984|0.598|82.65|0.103|
+|HAJ_EfficientNetB5_0565|0.557|82.87|0.098|
+|HAK_EfficientNetB5_6816|0.586|82.95|0.098|
+|HAL_EfficientNetB5_2956|0.591|81.80|0.102|
+|HAM_EfficientNetB5_1713|0.569|82.49|0.099|
+|HAN_EfficientNetB5_2570|0.571|84.02|0.101|
+|HAO_EfficientNetB5_1541|0.588|82.57|0.115|
+
+![Least accurate confusion matrix](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/HAF_Confusion_Matrix.png?raw=true)<br>
+**Figure H2:** The confusion matrix for the least accurate prediction.
+
+![Most accurate confusion matrix](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/HAN_Confusion_Matrix.png?raw=true)<br>
+**Figure H3:** The confusion matrix for the most accurate prediction.
+
+![Average accuracy confusion matrix](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/HAJ_Confusion_Matrix.png?raw=true?raw=true)<br>
+**Figure H4:** The confusion matrix for an average prediction.
+
+Figure H5 visualizes the voting approaches. The x-axis are the indices of the test images. The y-axis is the highest number of models that predicted the same class. For the majority of test images, all models in the ensemble predicted the same class. All images had at least five models predict the same class.
+
+![Highest vote tally plot](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/FinalEnsembleTallies.png?raw=true)<br>
+**Figure H5:** The highest vote tallies for all test images.
+
+### Conclusions
+
+Predictions of the private data were made using the classification approaches AP, MP, and V2. They scored 82.867%,83.110%, and 82.867% respectively on Kaggle's Public Leaderboard.
+
 ## Project Conclusions
 
-The experiment with the best accuracy was **DAB_EfficientNetB4_DA_DEF**. This experiment fine tuned the entire convolutional base and classifier of a pretrained EfficientNet-B4 model using the default data augmentation, a weighted random sampler, a very small L2 regularization. Its accuracy in classifying the samples in the validation set is 82.87%. Its confusion matrix is depicted in Figure 3.
+The non-ensemble experiment with the best accuracy is **GFF_EfficientNetB5_PT5**. This experiment fine tuned the entire convolutional base and classifier of a pretrained EfficientNet-B5 model using the default data augmentation, my custom data loader sampler, and a very small L2 regularization. Its accuracy in classifying the samples in the validation set is 83.18%. Its accuracy on the test data is 82.017% according to the public Kaggle leaderboard. Its confusion matrix is depicted in Figure 3.
 
-![The confusion matrix of the most accurate model.](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/DAB_Confusion_Matrix.png?raw=true)<br>
+![The confusion matrix of the most accurate model.](https://media.githubusercontent.com/media/blazingcayenne/deep_learning_with_pytorch_project2/main/images/GFF_Confusion_Matrix.png?raw=true)<br>
 **Figure 3:** The confusion matrix of the most accurate model.
+
+My most accurate prediction on Kaggle's Public Leadership is the FinalEnsemble, most probable predictions (Preds_MP). Its accuracy on the test data is 83.110% according to the public Kaggle leaderboard.
 
 ### Future Exploration
 
-The following areas warrant future exploration.
+The following areas warrant attention.
 
-* Investigate training other pretrained model families to determine whether they yield greater accuracy than the EfficientNet model family of the KenyanFood13 dataset.
 * Investigate why increasing the regularization not only reduced overfitting, but also reduced the model's accuracy.
 * Investigate whether the accuracies of the second stages of the two-stage model could be increased, thereby increasing the overall accuracy of the two-stage model.
-* Investigate whether ensembles of models from different families increase accuracy. In other words, are some model families better at classifying problematic samples than others?
+
+In general, the models confused the following classes.
+
+* kukuchoma and nyamachoma
+* sukumawiki and ugali
+
+Future exploration should focus on distinguishing between these classes.
