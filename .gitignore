@@ -130,9 +130,10 @@ dmypy.json
 
 # Project specific
 data
+images/cm
 images/data
-images/learning_rate
 images/loss
+images/lr
 models
 runs
 .vscode
